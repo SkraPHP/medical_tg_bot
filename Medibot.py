@@ -15,42 +15,27 @@ chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
 driver = webdriver.Chrome(chrome_options = chrome_options)
 
 #def
-def get_who_takes(curr_url):          
-    driver.get('https://'+curr_url)
-    tabs = driver.find_elements_by_class_name('tab--lwwFB')
-    ind = 0
-    while(len(tabs) == 0 and ind < 10):
-        ind += 1
-        time.sleep(1)
-        tabs = driver.find_elements_by_class_name('tab--lwwFB')
-    if(ind >= 10):
-        return ''
-    tabs[1].click()
-    translation = driver.find_elements_by_class_name('event-view-translation__iframe--Lpd5d')
-    ind = 0
-    while(len(translation) == 0 and ind < 10):
-        ind += 1
-        time.sleep(1)
-        translation = driver.find_elements_by_class_name('event-view-translation__iframe--Lpd5d')
-    if(ind >= 10):
-        return ''
-    driver.switch_to.frame(translation[0])
-    
-    soup = BeautifulSoup(driver.page_source)
-    centers = soup.find_all("div",{"class":"center"})
-    ind = 0
-    while(len(centers) == 0 and ind < 10):
+
+def get_who_takes(id):
+    try:
+        curr_url = f'https://clientsapi01w.bk6bba-resources.com/service-tv/mobile/mc?app_name=mobile_site&eventId={id}&lang=ru&sysId=22&page=field&scopeMarket=1600'
+        driver.get(curr_url)
+        soup = BeautifulSoup(driver.page_source)
+        centers = soup.find_all("div",{"class":"center"})
+        ind = 0
+        while(len(centers) == 0 and ind < 10):
         ind += 1
         time.sleep(1)
         soup = BeautifulSoup(driver.page_source)
         centers = soup.find_all("div",{"class":"center"})
-    if(ind >= 10):
+        if(ind >= 10):
         return ''
-    text = centers[0].find_all("div",{"class":"field__animation-transformer"})[1].text
-    driver.switch_to.default_content();
-    text = text.strip().replace('\n',' ').replace('\t',' ').split('МЕДИЦИНСКИЙ ТАЙМАУТ')[1].strip()
-    return 'Взял(а): ' + text
-
+        text = centers[0].find_all("div",{"class":"field__animation-transformer"})[1].text
+        driver.switch_to.default_content();
+        text = text.strip().replace('\n',' ').replace('\t',' ').split('МЕДИЦИНСКИЙ ТАЙМАУТ')[1].strip()
+        return 'Взял(а): ' + text
+    except:
+        return ''
 #code
 
 # token from BotFather
@@ -102,7 +87,7 @@ while(True):
         df_pairs_hist = df_pairs.copy()
         for i in range(len(new_pairs)):
             message = new_pairs.iloc[i].values[0]+'\n'+new_pairs.iloc[i].values[1]+'\n'+new_pairs.iloc[i].values[2]+' начался\nnew.fon.bet/live/tennis/'+str(new_pairs.iloc[i].values[3]) +'/'+str(new_pairs.iloc[i].values[4])
-            who_takes_med = get_who_takes('new.fon.bet/live/tennis/'+str(new_pairs.iloc[i].values[3]) +'/'+str(new_pairs.iloc[i].values[4]))
+            who_takes_med = get_who_takes(new_pairs.iloc[i].values[4])
             message += '\n'+ who_takes_med
             messageTBot = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={chat_id}&text={message}"
             response = requests.get(messageTBot).json()
