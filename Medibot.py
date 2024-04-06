@@ -24,12 +24,12 @@ def get_who_takes(id):
         centers = soup.find_all("div",{"class":"center"})
         ind = 0
         while(len(centers) == 0 and ind < 10):
-        ind += 1
-        time.sleep(1)
-        soup = BeautifulSoup(driver.page_source)
+            ind += 1
+            time.sleep(1)
+            soup = BeautifulSoup(driver.page_source)
         centers = soup.find_all("div",{"class":"center"})
         if(ind >= 10):
-        return ''
+            return ''
         text = centers[0].find_all("div",{"class":"field__animation-transformer"})[1].text
         driver.switch_to.default_content();
         text = text.strip().replace('\n',' ').replace('\t',' ').split('МЕДИЦИНСКИЙ ТАЙМАУТ')[1].strip()
