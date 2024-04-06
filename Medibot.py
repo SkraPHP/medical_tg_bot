@@ -27,7 +27,7 @@ def get_who_takes(id):
             ind += 1
             time.sleep(1)
             soup = BeautifulSoup(driver.page_source)
-        centers = soup.find_all("div",{"class":"center"})
+            centers = soup.find_all("div",{"class":"center"})
         if(ind >= 10):
             return ''
         text = centers[0].find_all("div",{"class":"field__animation-transformer"})[1].text
